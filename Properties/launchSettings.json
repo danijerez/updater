@@ -2,7 +2,7 @@
   "profiles": {
     "updater": {
       "commandName": "Project",
-      "commandLineArgs": "shellprogressbar.zip https://www.sample-videos.com/zip/50mb.zip calc"
+      "commandLineArgs": "sample.zip https://www.learningcontainer.com/download/sample-zip-files/?wpdmdl=1637&refresh=632c14f2246c41663833330 calc"
     }
   }
 }
