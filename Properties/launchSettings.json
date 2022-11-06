@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "updater": {
+      "commandName": "Project",
+      "commandLineArgs": "shellprogressbar.zip https://www.sample-videos.com/zip/50mb.zip calc"
+    }
+  }
+}
