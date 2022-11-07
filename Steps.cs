@@ -33,8 +33,7 @@ public static class Steps
                 
             }
             main.Tick();
-            if (progress != null)
-                progress.Report(100);
+
             return true;
         }
         catch (Exception e)
