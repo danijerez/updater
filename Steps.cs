@@ -75,13 +75,14 @@ public static class Steps
         
     }
 
-    public static bool OpenExe(IProgress<float> progress, ProgressBar main, ProgressBarOptions options, string exe)
+    public static bool OpenExe(IProgress<float> progress, ProgressBar main, ProgressBarOptions options, string exe, string fileName)
     {
         using var child = main.Spawn(100, $"update finished. opening '{exe}'", options);
         try
         {
             progress = child.AsProgress<float>();
             progress.Report(100);
+            File.Delete(fileName);
             Process.Start(exe);
 
             main.Tick();

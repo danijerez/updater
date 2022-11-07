@@ -40,7 +40,7 @@ class Program
                 if (!step1) return;
                 var step2 = Steps.UnZipFile(progress, main, options, fileName, filePath);
                 if (!step2) return;
-                var step3 = Steps.OpenExe(progress, main, options, exe);
+                var step3 = Steps.OpenExe(progress, main, options, exe, fileName);
             }
             catch (Exception e)
             {
