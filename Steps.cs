@@ -30,8 +30,11 @@ public static class Steps
                 };
 
                 await client.StartDownload();
+                
             }
             main.Tick();
+            if (progress != null)
+                progress.Report(100);
             return true;
         }
         catch (Exception e)
@@ -41,10 +44,10 @@ public static class Steps
             Log.Error(e.Message, e);
             return false;
         }
-        
+
     }
 
-    public static bool UnZipFile(IProgress<float> progress, ProgressBar main, ProgressBarOptions options, string fileName, string filePath)
+    public static bool UnZipFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string fileName, string filePath)
     {
         using var child = main.Spawn(100, $"unzip '{fileName}' in '{filePath}'", options);
 
@@ -65,17 +68,18 @@ public static class Steps
         }
         catch (Exception e)
         {
-            progress.Report(0);
+            if (progress != null)
+                progress.Report(0);
             child.ForegroundColor = ConsoleColor.Red;
             child.WriteErrorLine(e.Message);
             Log.Error(e.Message, e);
             return false;
         }
 
-        
+
     }
 
-    public static bool OpenExe(IProgress<float> progress, ProgressBar main, ProgressBarOptions options, string exe, string fileName)
+    public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string exe, string fileName)
     {
         using var child = main.Spawn(100, $"update finished. opening '{exe}'", options);
         try
@@ -90,12 +94,13 @@ public static class Steps
         }
         catch (Exception e)
         {
-            progress.Report(0);
-            child.ForegroundColor= ConsoleColor.Red;
+            if (progress != null)
+                progress.Report(0);
+            child.ForegroundColor = ConsoleColor.Red;
             child.WriteErrorLine(e.Message);
             Log.Error(e.Message, e);
             return false;
         }
-        
+
     }
 }

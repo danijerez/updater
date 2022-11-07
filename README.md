@@ -3,18 +3,19 @@
 ## Simple solution to update apps. Call updater.exe with whatever arguments you need.
 
 # 📚 Arguments
-*  `filename:` name with which the downloaded file will be saved
-*  `url:` address where the compressed file (zip) to download is located
-*  `exe:` executable to start when the process terminate
+1.  `filename:` name with which the downloaded file will be saved
+2.  `url:` address where the compressed file (zip) to download is located
+3.  `exe:` executable to start when the process terminate
+4.  `k:` prevent the app from auto closing
 
 # ▶️ How to start 
 ### _in your favorite terminal_
 ```
-.\updater.exe filename url exe
+.\updater.exe filename url exe k
 ```
 ### _example_
 ```
-.\updater.exe samplevideo.zip https://www.sample-videos.com/zip/50mb.zip calc
+.\updater.exe samplevideo.zip https://www.sample-videos.com/zip/50mb.zip calc k
 ```
 
 <img src="imgs/sample.gif" width=800px> 

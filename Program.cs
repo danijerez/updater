@@ -50,7 +50,11 @@ class Program
 
         }
 
-        Environment.Exit(0);
+        if (args.Length > 3 && args[3].Equals("k"))
+        {
+            Console.WriteLine("press any key to close...");
+            Console.ReadLine();
+        }
 
     }
 
