@@ -1,6 +1,6 @@
 # 📦 Updater ~ [![Release](https://img.shields.io/badge/releases-orange)](https://github.com/danijerez/updater/releases) [![Release](https://img.shields.io/badge/dotnet-7.0-purple)](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 
-## Simple solution to update apps. Call updater.exe with whatever arguments you need.
+## Simple solution to update apps. Call `updater.exe` with whatever arguments you need.
 
 # 📚 Arguments
 1.  `{filename}`: name with which the downloaded file will be saved
