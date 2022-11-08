@@ -2,7 +2,7 @@
   "profiles": {
     "updater": {
       "commandName": "Project",
-      "commandLineArgs": "sample.zip https://www.sample-videos.com/zip/10mb.zip calc k"
+      "commandLineArgs": "sample.zip https://www.sample-videos.com/zip/50mb.zip calc k"
     }
   }
 }

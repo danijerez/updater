@@ -30,7 +30,7 @@ public static class Steps
                 };
 
                 await client.StartDownload();
-                
+
             }
             main.Tick();
 
@@ -48,20 +48,21 @@ public static class Steps
 
     public static bool UnZipFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string fileName, string filePath)
     {
-        using var child = main.Spawn(100, $"unzip '{fileName}' in '{filePath}'", options);
+        using var child = main.Spawn(0, $"unzip '{fileName}' in '{filePath}'", options);
 
         try
         {
 
             progress = child.AsProgress<float>();
-            progress.Report(100);
-
             using (ZipFile archive = new ZipFile(filePath + fileName))
             {
+
                 archive.RemoveSelectedEntries("updater.exe");
+                archive.ExtractProgress += new EventHandler<ExtractProgressEventArgs>((sender, e) => ExtractProgress(sender, e, progress, child, filePath));
                 archive.ExtractAll(filePath, ExtractExistingFileAction.OverwriteSilently);
             }
-
+            child.Message = $"unzip successfully '{fileName}' in '{filePath}'";
+            child.Tick();
             main.Tick();
             return true;
         }
@@ -80,7 +81,7 @@ public static class Steps
 
     public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string exe, string fileName)
     {
-        using var child = main.Spawn(100, $"update finished. opening '{exe}'", options);
+        using var child = main.Spawn(100, $"updated successfully. opening '{exe}'", options);
         try
         {
             progress = child.AsProgress<float>();
@@ -101,5 +102,19 @@ public static class Steps
             return false;
         }
 
+    }
+
+    public static void ExtractProgress(object? sender, ExtractProgressEventArgs e, IProgress<float>? progress, ChildProgressBar pbar, string filePath)
+    {
+        if (pbar.MaxTicks < (int)e.TotalBytesToTransfer)
+            pbar.MaxTicks = (int)e.TotalBytesToTransfer;
+
+        if (e.TotalBytesToTransfer > 0)
+        {
+            pbar.Message = $"unzip '{e.CurrentEntry.FileName}' in '{filePath}'";
+            var p = (float)e.BytesTransferred / (float)e.TotalBytesToTransfer;
+            if (progress != null)
+                progress.Report(p);
+        }
     }
 }
