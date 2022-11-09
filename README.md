@@ -43,7 +43,7 @@ stateDiagram-v2
 ```
 ### _example_
 ```
-.\updater.exe samplevideo.zip https://www.sample-videos.com/zip/50mb.zip calc
+.\updater.exe update.zip https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip ScreenToGif.exe
 ```
 
 <img src="imgs/sample.gif" width=800px> 
