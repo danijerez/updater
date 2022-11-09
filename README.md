@@ -26,12 +26,13 @@ stateDiagram-v2
     end note
     
     note right of unzip
-        unzip {filename} and overwrite the downloaded file 
-        in the directory
+        unzip {filename} and overwrite the downloaded 
+        file in the directory
     end note
     
     note left of open
-        run the executable {exe} and close (k) the terminal.
+        run the executable {exe} and close (k) 
+        the terminal
     end note
 ```
 
