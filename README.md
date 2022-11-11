@@ -13,8 +13,8 @@
 | -o  | --open  | Executable to start when the process terminate  |   |
 |  -r | --remove  | Remove files before opening  | `separator ','`  |
 | -i  | --ignore  | Ignore files when unzipping  |  `separator ','` |
-|   | `--help`  | Display this help screen  |   |
-|   | `--version`  | Display version information  |   |
+|   | --help  | Display this help screen  |   |
+|   | --version  | Display version information  |   |
 
 
 
@@ -53,7 +53,7 @@ stateDiagram-v2
 ```
 ### _example_
 ```
-.\updater.exe https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip -z test.zip -o ScreenToGif.exe -c
+.\updater.exe https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip -z test.zip -o ScreenToGif.exe -w
 ```
 
 <img src="imgs/sample.gif" width=800px> 
