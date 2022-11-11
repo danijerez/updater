@@ -2,13 +2,21 @@
 
 ## Simple solution to update apps. Call `updater.exe` with whatever arguments you need.
 
-# 📚 Arguments
-*  `{url}`: address where the compressed file (zip) to download is located. is required and must be the first argument
-*  `-z {zipname}`: name with which the downloaded file will be saved, `default`: update.zip
-*  `-o {exe}`: executable to start when the process terminate, it's `optional`
-*  `-r {remove}`: delete files before opening, it's `optional`
-*  `-i {ignore}`: ignore files when unzipping, it's `optional`
-*  `-c`: prevent the app from auto closing, is `optional`, if you run it from a terminal it is not necessary
+# 📚 Arg commands
+
+| short  | long | help  | remark  |
+|---|---|---|---|
+| 0 |   | Address where the compressed file (zip) to download is located. is required and must be  | `required`  |
+| -z  | --zipname  | Name with which the downloaded file will be saved | `def`: update.zip  |
+| -p  | --filepath  | Path where to download and unpack | `def`: base directory |
+| -w |  --wait | Prevent the app from auto closing  |   |
+| -o  | --open  | Executable to start when the process terminate  |   |
+|  -r | --remove  | Remove files before opening  | `separator ','`  |
+| -i  | --ignore  | Ignore files when unzipping  |  `separator ','` |
+|   | `--help`  | Display this help screen  |   |
+|   | `--version`  | Display version information  |   |
+
+
 
 ```mermaid
 stateDiagram-v2
@@ -23,7 +31,7 @@ stateDiagram-v2
     end note
 
     note left of download
-        It will show the download {url} process 
+        It will show the download {0} process 
         and the time taken
     end note
     
@@ -33,7 +41,7 @@ stateDiagram-v2
     end note
     
     note left of open
-        run the executable {exe} and close (-c) 
+        run the executable {exe}
         the terminal
     end note
 ```
@@ -41,7 +49,7 @@ stateDiagram-v2
 # ▶️ How to start 
 ### _in your favorite terminal_
 ```
-.\updater.exe 'url' -f 'zipname' -o 'exe' -c
+.\updater.exe 'url' -f 'zipname' -o 'exe' -w
 ```
 ### _example_
 ```
@@ -56,3 +64,4 @@ stateDiagram-v2
 | [Serilog](https://github.com/saeidjoker/libc.translation/)   | Simple .NET logging with fully-structured events                                            |2.12.0|
 | [DotNetZip](https://github.com/saeidjoker/libc.translation/)   | .NET library for handling ZIP files, and some associated tools.                                            |1.16.0|
 | [ShellProgressBar](https://github.com/saeidjoker/libc.translation/)   | visualize (concurrent) progress in your console application    |5.2.0|
+| [CommandLineParser](https://github.com/commandlineparser/commandline)   |  command line parser that brings standardized  |2.9.1|

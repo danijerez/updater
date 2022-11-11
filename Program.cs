@@ -15,32 +15,31 @@ class Program
                      .CreateLogger();
 
 
-        var a = Parser.Default.ParseArguments<Options>(args)
-            .WithParsed(o =>
+        var a = Parser.Default.ParseArguments<Options>(args);
+
+        a.WithParsed(o =>
+        {
+
+            if (o.FilePath == null)
+                o.FilePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (o.NameZip == null)
+                o.NameZip = "update.zip";
+
+            if (o.DownloadUrl == null)
             {
-
-                if (o.FilePath == null)
-                    o.FilePath = AppDomain.CurrentDomain.BaseDirectory;
-
-                if (o.NameZip == null)
-                    o.NameZip = "update.zip";
-
-                if (o.DownloadUrl == null)
-                {
-                    var m = "the download url must be the first ardument and cannot be empty";
-                    Console.WriteLine(m);
-                    Log.Error(m);
-                    Wait();
-                }
-
-            })
-            .WithNotParsed(e =>
-            {
-                var sentenceBuilder = SentenceBuilder.Create();
-                foreach (var error in e)
-                    Log.Error(sentenceBuilder.FormatError(error));
+                var m = "the download url must be the first ardument and cannot be empty";
+                Console.WriteLine(m);
+                Log.Error(m);
                 Wait();
-            });
+            }
+
+        })
+        .WithNotParsed(e =>
+        {
+            var helpText = HelpText.AutoBuild(a, h => HelpText.DefaultParsingErrorsHandler(a, h), e => e);
+            Wait();
+        });
 
         IProgress<float>? progress = null;
 
