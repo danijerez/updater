@@ -3,10 +3,12 @@
 ## Simple solution to update apps. Call `updater.exe` with whatever arguments you need.
 
 # 📚 Arguments
-1.  `{filename}`: name with which the downloaded file will be saved
-2.  `{url}`: address where the compressed file (zip) to download is located
-3.  `{exe}`: executable to start when the process terminate
-4.  `k`: prevent the app from auto closing, is optional, if you run it from a terminal it is not necessary
+*  `{url}`: address where the compressed file (zip) to download is located. is required and must be the first argument
+*  `-z {zipname}`: name with which the downloaded file will be saved, `default`: update.zip
+*  `-o {exe}`: executable to start when the process terminate, it's `optional`
+*  `-r {remove}`: delete files before opening, it's `optional`
+*  `-i {ignore}`: ignore files when unzipping, it's `optional`
+*  `-c`: prevent the app from auto closing, is `optional`, if you run it from a terminal it is not necessary
 
 ```mermaid
 stateDiagram-v2
@@ -26,12 +28,12 @@ stateDiagram-v2
     end note
     
     note right of unzip
-        unzip {filename} and overwrite the downloaded 
+        unzip {zipname} and overwrite the downloaded 
         file in the directory
     end note
     
     note left of open
-        run the executable {exe} and close (k) 
+        run the executable {exe} and close (-c) 
         the terminal
     end note
 ```
@@ -39,11 +41,11 @@ stateDiagram-v2
 # ▶️ How to start 
 ### _in your favorite terminal_
 ```
-.\updater.exe 'filename' 'url' 'exe' k
+.\updater.exe 'url' -f 'zipname' -o 'exe' -c
 ```
 ### _example_
 ```
-.\updater.exe update.zip https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip ScreenToGif.exe
+.\updater.exe https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip -z test.zip -o ScreenToGif.exe -c
 ```
 
 <img src="imgs/sample.gif" width=800px> 

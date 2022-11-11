@@ -2,7 +2,7 @@
   "profiles": {
     "updater": {
       "commandName": "Project",
-      "commandLineArgs": "update.zip https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip ScreenToGif.exe"
+      "commandLineArgs": "https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip -z test.zip -i ScreenToGif.exe -c"
     }
   }
 }

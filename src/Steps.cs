@@ -5,13 +5,13 @@ using System.Diagnostics;
 
 public static class Steps
 {
-    public static async Task<bool> DownloadFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string downloadFileUrl, string fileName)
+    public static async Task<bool> DownloadFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string downloadFileUrl, string fileName, string filePath)
     {
         using var child = main.Spawn(int.MaxValue, "starting download", options);
 
         try
         {
-            using (var client = new HttpClientDownloadWithProgress(downloadFileUrl, fileName))
+            using (var client = new HttpClientDownloadWithProgress(downloadFileUrl, filePath + fileName))
             {
                 client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
                 {
@@ -23,7 +23,7 @@ public static class Steps
                     {
                         progress = child.AsProgress<float>();
                         child.MaxTicks = (int)totalFileSize;
-                        child.Message = $"download '{fileName}' to '{downloadFileUrl}'";
+                        child.Message = $"download '{fileName}' in {filePath} to '{downloadFileUrl}'";
                     }
 
                     progress.Report((float)progressPercentage / 100);
@@ -46,7 +46,7 @@ public static class Steps
 
     }
 
-    public static bool UnZipFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string fileName, string filePath)
+    public static bool UnZipFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string fileName, string filePath, IEnumerable<string>? ignore)
     {
         using var child = main.Spawn(0, $"unzip '{fileName}' in '{filePath}'", options);
 
@@ -56,8 +56,10 @@ public static class Steps
             progress = child.AsProgress<float>();
             using (ZipFile archive = new ZipFile(filePath + fileName))
             {
+                if (ignore != null)
+                    foreach (var i in ignore)
+                        archive.RemoveSelectedEntries(i);
 
-                archive.RemoveSelectedEntries("updater.exe");
                 archive.ExtractProgress += new EventHandler<ExtractProgressEventArgs>((sender, e) => ExtractProgress(sender, e, progress, child, filePath));
                 archive.ExtractAll(filePath, ExtractExistingFileAction.OverwriteSilently);
             }
@@ -79,15 +81,23 @@ public static class Steps
 
     }
 
-    public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string exe, string fileName)
+    public static void RemoveFiles(IEnumerable<string>? remove, string filePath)
     {
-        using var child = main.Spawn(100, $"updated successfully. opening '{exe}'", options);
+        if (remove != null)
+            foreach (var r in remove)
+                File.Delete(filePath + r);
+    }
+
+
+    public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string exe, string filePath)
+    {
+        using var child = main.Spawn(100, $"updated successfully. opening '{exe}' to {filePath}", options);
         try
         {
             progress = child.AsProgress<float>();
             progress.Report(100);
-            File.Delete(fileName);
-            Process.Start(exe);
+
+            Process.Start(filePath + exe);
 
             main.Tick();
             return true;
