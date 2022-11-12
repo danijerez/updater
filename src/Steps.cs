@@ -81,11 +81,20 @@ public static class Steps
 
     }
 
-    public static void RemoveFiles(IEnumerable<string>? remove, string filePath)
+    public static void RemoveFilesOrDirectory(IEnumerable<string>? remove, string filePath)
     {
+        DirectoryInfo di = new DirectoryInfo(filePath);
+
         if (remove != null)
-            foreach (var r in remove)
-                File.Delete(filePath + r);
+        {
+            foreach (FileInfo file in di.GetFiles())
+                if (remove.Contains(file.Name))
+                    file.Delete();
+            foreach (DirectoryInfo dir in di.GetDirectories())
+                if (remove.Contains(dir.Name))
+                    dir.Delete(true);
+        }
+
     }
 
 

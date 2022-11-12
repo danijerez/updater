@@ -71,7 +71,7 @@ class Program
                 if (!step2)
                     return;
 
-                Steps.RemoveFiles(a.Value.Remove, a.Value.FilePath);
+                Steps.RemoveFilesOrDirectory(a.Value.Remove, a.Value.FilePath);
 
                 if (a.Value.OpenExe != null)
                     Steps.OpenExe(progress, main, options, a.Value.OpenExe, a.Value.FilePath);
