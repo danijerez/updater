@@ -2,6 +2,7 @@
 using CommandLine.Text;
 using Serilog;
 using ShellProgressBar;
+using static Steps;
 
 class Program
 {
@@ -54,30 +55,18 @@ class Program
         };
 
         var nSteps = 2;
-        if (a.Value.OpenExe != null)
-            nSteps++;
+        if (a.Value.OpenExe != null) nSteps++;
 
         using (var main = new ProgressBar(nSteps, $"update process", options))
         {
             try
             {
-                if (a.Value.DownloadUrl == null || a.Value.NameZip == null || a.Value.FilePath == null)
-                    return;
-
-                var step1 = await Steps.DownloadFile(progress, main, options, a.Value.DownloadUrl, a.Value.NameZip, a.Value.FilePath);
-                if (!step1)
-                    return;
-                var step2 = Steps.UnZipFile(progress, main, options, a.Value.NameZip, a.Value.FilePath, a.Value.Ignore);
-                if (!step2)
-                    return;
-
-                Steps.RemoveFilesOrDirectory(a.Value.Remove, a.Value.FilePath);
-
-                if (a.Value.OpenExe != null)
-                    Steps.OpenExe(progress, main, options, a.Value.OpenExe, a.Value.FilePath);
-
-                if (!a.Value.AutoClose)
-                    Wait();
+                if (a.Value.DownloadUrl == null || a.Value.NameZip == null || a.Value.FilePath == null) return;
+                if (!await DownloadFile(progress, main, options, a.Value.DownloadUrl, a.Value.NameZip, a.Value.FilePath)) return;
+                if (!UnZipFile(progress, main, options, a.Value.NameZip, a.Value.FilePath, a.Value.Ignore)) return;
+                RemoveFilesOrDirectory(a.Value.Remove, a.Value.FilePath);
+                if (a.Value.OpenExe != null) OpenExe(progress, main, options, a.Value.OpenExe, a.Value.FilePath);
+                if (a.Value.WaitClose) EndWait(main);
             }
             catch (Exception e)
             {
@@ -89,12 +78,7 @@ class Program
 
     }
 
-    static void Wait()
-    {
-        Console.WriteLine("press any key to close...");
-        Console.ReadLine();
-        Environment.Exit(0);
-    }
+
 
 }
 

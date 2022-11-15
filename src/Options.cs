@@ -12,7 +12,7 @@ public class Options
     public string? FilePath { get; set; }
 
     [Option('w', "wait", HelpText = "Prevent the app from auto closing")]
-    public bool AutoClose { get; set; }
+    public bool WaitClose { get; set; }
 
     [Option('o', "open", HelpText = "Executable to start when the process terminate. Separator ','")]
     public string? OpenExe { get; set; }

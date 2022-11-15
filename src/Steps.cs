@@ -136,4 +136,18 @@ public static class Steps
                 progress.Report(p);
         }
     }
+
+    public static void Wait()
+    {
+        Console.WriteLine("press any key to close...");
+        Console.ReadLine();
+        Environment.Exit(0);
+    }
+
+    public static void EndWait(ProgressBar pbar)
+    {
+        pbar.WriteLine("press any key to close...");
+        Console.ReadLine();
+        Environment.Exit(0);
+    }
 }
