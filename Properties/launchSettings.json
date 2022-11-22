@@ -2,7 +2,7 @@
   "profiles": {
     "updater": {
       "commandName": "Project",
-      "commandLineArgs": "https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip -o ScreenToGif.exe -w -r update.zip,logs"
+      "commandLineArgs": "https://www.exemsi.com/downloads/packages/SumatraPDF/SumatraPDF-2.1.1-install.msi -o ScreenToGif.exe -w -r update.msi,logs -e msi"
     }
   }
 }

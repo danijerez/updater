@@ -7,7 +7,8 @@
 | short  | long | help  | remark  |
 |---|---|---|---|
 | 0 |   | Address where the compressed file (zip) to download is located. is required and must be  | `required`  |
-| -z  | --zipname  | Name with which the downloaded file will be saved | `def`: update.zip  |
+| -f  | --filename  | Name with which the downloaded file will be saved | `def`: update  |
+| -e  | --extension  | Extension with which the downloaded file will be saved | `def`: zip  |
 | -p  | --filepath  | Path where to download and unpack | `def`: base directory |
 | -w |  --wait | Prevent the app from auto closing  |   |
 | -o  | --open  | Executable to start when the process terminate  |   |
@@ -22,8 +23,8 @@
 stateDiagram-v2
     direction LR
     updater --> download
-    download --> unzip
-    unzip --> open
+    download --> unpack
+    unpack --> open
     
     note right of updater
         run the updater from a command line 
@@ -35,13 +36,13 @@ stateDiagram-v2
         and the time taken
     end note
     
-    note right of unzip
-        unzip {zipname} and overwrite the downloaded 
+    note right of unpack
+        unpack {filename}.{extension} and overwrite the downloaded 
         file in the directory
     end note
     
     note left of open
-        run the executable {exe}
+        run the executable {open}
         the terminal
     end note
 ```

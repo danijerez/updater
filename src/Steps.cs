@@ -5,13 +5,16 @@ using System.Diagnostics;
 
 public static class Steps
 {
-    public static async Task<bool> DownloadFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string downloadFileUrl, string fileName, string filePath)
+    public static async Task<bool> DownloadFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, Options arguments)
     {
         using var child = main.Spawn(int.MaxValue, "starting download", options);
 
         try
         {
-            using (var client = new HttpClientDownloadWithProgress(downloadFileUrl, filePath + fileName))
+            if (arguments.DownloadUrl == null)
+                return false;
+
+            using (var client = new HttpClientDownloadWithProgress(arguments.DownloadUrl, arguments.FilePath + arguments.FileName))
             {
                 client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
                 {
@@ -23,7 +26,7 @@ public static class Steps
                     {
                         progress = child.AsProgress<float>();
                         child.MaxTicks = (int)totalFileSize;
-                        child.Message = $"download '{fileName}' in {filePath} to '{downloadFileUrl}'";
+                        child.Message = $"download '{arguments.FileName}' in {arguments.FilePath} to '{arguments.DownloadUrl}'";
                     }
 
                     progress.Report((float)progressPercentage / 100);
@@ -46,27 +49,52 @@ public static class Steps
 
     }
 
-    public static bool UnZipFile(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string fileName, string filePath, IEnumerable<string>? ignore)
+    public static bool UnpackDownload(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, Options arguments)
     {
-        using var child = main.Spawn(0, $"unzip '{fileName}' in '{filePath}'", options);
+        using var child = main.Spawn(0, $"unpack '{arguments.FileName}.{arguments.FileExtension}' in '{arguments.FilePath}'", options);
 
         try
         {
 
-            progress = child.AsProgress<float>();
-            using (ZipFile archive = new ZipFile(filePath + fileName))
+            if (arguments.FileExtension.Equals(PackFormat.msi))
             {
-                if (ignore != null)
-                    foreach (var i in ignore)
-                        archive.RemoveSelectedEntries(i);
+                Process process = new Process();
+                process.StartInfo.WorkingDirectory = arguments.FilePath;
+                process.StartInfo.FileName = "msiexec";
+                process.StartInfo.Verb = "runas";
+                process.StartInfo.Arguments = $"/i {arguments.FilePath}{arguments.FileName} /quiet /qn /norestart ALLUSERS=1";
 
-                archive.ExtractProgress += new EventHandler<ExtractProgressEventArgs>((sender, e) => ExtractProgress(sender, e, progress, child, filePath));
-                archive.ExtractAll(filePath, ExtractExistingFileAction.OverwriteSilently);
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = false;
+                process.Start();
+                process.WaitForExit();
+                child.Tick();
+                main.Tick();
+                return true;
             }
-            child.Message = $"unzip successfully '{fileName}' in '{filePath}'";
-            child.Tick();
-            main.Tick();
-            return true;
+
+            if (arguments.FileExtension.Equals(PackFormat.zip))
+            {
+                progress = child.AsProgress<float>();
+                using (ZipFile archive = new ZipFile(arguments.FilePath + arguments.FileName))
+                {
+                    if (arguments.Ignore != null)
+                        foreach (var i in arguments.Ignore)
+                            archive.RemoveSelectedEntries(i);
+
+                    if (arguments.FilePath == null) return false;
+
+                    archive.ExtractProgress += new EventHandler<ExtractProgressEventArgs>((sender, e) => ExtractProgress(sender, e, progress, child, arguments.FilePath));
+                    archive.ExtractAll(arguments.FilePath, ExtractExistingFileAction.OverwriteSilently);
+                }
+                child.Message = $"unzip successfully '{arguments.FileName}' in '{arguments.FilePath}'";
+                child.Tick();
+                main.Tick();
+                return true;
+            }
+
+            return false;
+
         }
         catch (Exception e)
         {
@@ -81,32 +109,35 @@ public static class Steps
 
     }
 
-    public static void RemoveFilesOrDirectory(IEnumerable<string>? remove, string filePath)
+    public static void RemoveFilesOrDirectory(Options arguments)
     {
-        DirectoryInfo di = new DirectoryInfo(filePath);
 
-        if (remove != null)
+        if (arguments.FilePath == null) return;
+
+        DirectoryInfo di = new DirectoryInfo(arguments.FilePath);
+
+        if (arguments.Remove != null)
         {
             foreach (FileInfo file in di.GetFiles())
-                if (remove.Contains(file.Name))
+                if (arguments.Remove.Contains(file.Name))
                     file.Delete();
             foreach (DirectoryInfo dir in di.GetDirectories())
-                if (remove.Contains(dir.Name))
+                if (arguments.Remove.Contains(dir.Name))
                     dir.Delete(true);
         }
 
     }
 
 
-    public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, string exe, string filePath)
+    public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, Options arguments)
     {
-        using var child = main.Spawn(100, $"updated successfully. opening '{exe}' to {filePath}", options);
+        using var child = main.Spawn(100, $"updated successfully. opening '{arguments.OpenExe}' to {arguments.FilePath}", options);
         try
         {
             progress = child.AsProgress<float>();
             progress.Report(100);
 
-            Process.Start(filePath + exe);
+            Process.Start(arguments.FilePath + arguments.OpenExe);
 
             main.Tick();
             return true;

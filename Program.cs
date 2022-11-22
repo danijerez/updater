@@ -24,8 +24,8 @@ class Program
             if (o.FilePath == null)
                 o.FilePath = AppDomain.CurrentDomain.BaseDirectory;
 
-            if (o.NameZip == null)
-                o.NameZip = "update.zip";
+            if (o.FileName == null)
+                o.FileName = "update";
 
             if (o.DownloadUrl == null)
             {
@@ -61,11 +61,11 @@ class Program
         {
             try
             {
-                if (a.Value.DownloadUrl == null || a.Value.NameZip == null || a.Value.FilePath == null) return;
-                if (!await DownloadFile(progress, main, options, a.Value.DownloadUrl, a.Value.NameZip, a.Value.FilePath)) return;
-                if (!UnZipFile(progress, main, options, a.Value.NameZip, a.Value.FilePath, a.Value.Ignore)) return;
-                RemoveFilesOrDirectory(a.Value.Remove, a.Value.FilePath);
-                if (a.Value.OpenExe != null) OpenExe(progress, main, options, a.Value.OpenExe, a.Value.FilePath);
+                if (a.Value.DownloadUrl == null || a.Value.FileName == null || a.Value.FilePath == null) return;
+                if (!await DownloadFile(progress, main, options, a.Value)) return;
+                if (!UnpackDownload(progress, main, options, a.Value)) return;
+                RemoveFilesOrDirectory(a.Value);
+                if (a.Value.OpenExe != null) OpenExe(progress, main, options, a.Value);
                 if (a.Value.WaitClose) EndWait(main);
             }
             catch (Exception e)
