@@ -2,21 +2,23 @@
 using CommandLine.Text;
 using Serilog;
 using ShellProgressBar;
-using static Steps;
+using System.Reflection;
+using static UpdaterSteps;
 
 class Program
 {
     static async Task Main(string[] args)
     {
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
 
         Log.Logger = new LoggerConfiguration()
                      .Enrich.FromLogContext()
                      .MinimumLevel.Debug()
-                     .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + @"\logs\Updater_.txt", rollingInterval: RollingInterval.Day)
+                     .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + $@"\logs\updater_{version}_.txt", rollingInterval: RollingInterval.Day)
                      .CreateLogger();
 
 
-        var a = Parser.Default.ParseArguments<Options>(args);
+        var a = Parser.Default.ParseArguments<ArgOptions>(args);
 
         a.WithParsed(o =>
         {

@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-public class Options
+public class ArgOptions
 {
     [Value(0, Required = true, HelpText = "Address where the compressed file (zip) to download is located. is required and must be the first argument")]
     public string? DownloadUrl { get; set; }
@@ -9,7 +9,7 @@ public class Options
     public string? FileName { get; set; }
 
     [Option('e', "extension", HelpText = "Name with which the downloaded file will be saved, default: update")]
-    public PackFormat FileExtension { get; set; }
+    public PackFormat? FileExtension { get; set; }
 
     [Option('p', "filepath", HelpText = "Path where to download and unpack, default is base directory")]
     public string? FilePath { get; set; }
@@ -30,6 +30,6 @@ public class Options
 
 public enum PackFormat
 {
-    zip, msi
+    msi
 }
 
