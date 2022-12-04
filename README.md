@@ -19,7 +19,6 @@
 |   | --version  | Display version information  |   |
 
 
-
 ```mermaid
 stateDiagram-v2
     direction LR
@@ -49,11 +48,11 @@ stateDiagram-v2
 ```
 
 # ▶️ How to start 
-### _in your favorite terminal_
+💻 _in your favorite terminal_
 ```
 .\updater 'url' -r update.zip -o 'exe' -w
 ```
-### _example zip_
+🟢 _example zip_
 ```
 .\updater https://github.com/NickeManarin/ScreenToGif/releases/download/2.37.1/ScreenToGif.2.37.1.Portable.x64.zip -o ScreenToGif.exe -w -r update, logs
 ```
@@ -61,14 +60,16 @@ stateDiagram-v2
 <img src="imgs/sample.gif" width=800px> 
 
 
-_call example in c#_
+🔮 _call example in c#_
 ```
+    var exe = "MyExe.exe";
+    var url = "https://..."
 
     ProcessStartInfo psInfo = new()
     {
         FileName = "updater.exe",
         UseShellExecute = true,
-        Arguments = $"{DownloadUrl} -i {psInfo.FileName} -o {NameExe} -r update -w"
+        Arguments = $"{url} -o {exe} -r update -w"
     };
 
     Process.Start(psInfo);
@@ -76,9 +77,14 @@ _call example in c#_
                 
 ```
 
-### _example msi_
+🟢 _example msi_
 ```
 https://www.exemsi.com/downloads/packages/Firefox/Firefox%20Setup%2014.0.1.msi -w -r update,logs -e msi
+```
+
+# 💾 Compiled
+```
+dotnet publish -p:PublishProfile=FolderProfile
 ```
 
 # 🦄 Nugets
