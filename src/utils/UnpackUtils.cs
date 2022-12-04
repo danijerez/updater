@@ -47,7 +47,7 @@ namespace updater.utils
             process.StartInfo.WorkingDirectory = arguments.FilePath;
             process.StartInfo.FileName = "msiexec";
             process.StartInfo.Verb = "runas";
-            process.StartInfo.Arguments = $"/i {arguments.FilePath}{arguments.FileName} /quiet /qn /norestart ALLUSERS=1";
+            process.StartInfo.Arguments = $"/package {arguments.FilePath}{arguments.FileName} /quiet";
 
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = false;
