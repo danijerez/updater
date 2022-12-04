@@ -1,5 +1,6 @@
-﻿using Ionic.Zip;
-using Serilog;
+﻿using Serilog;
+using SharpCompress.Archives;
+using SharpCompress.Common;
 using ShellProgressBar;
 using System.Diagnostics;
 
@@ -51,6 +52,7 @@ public static class Steps
 
     public static bool UnpackDownload(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, Options arguments)
     {
+
         using var child = main.Spawn(0, $"unpack '{arguments.FileName}.{arguments.FileExtension}' in '{arguments.FilePath}'", options);
 
         try
@@ -72,28 +74,41 @@ public static class Steps
                 main.Tick();
                 return true;
             }
-
-            if (arguments.FileExtension.Equals(PackFormat.zip))
+            else
             {
                 progress = child.AsProgress<float>();
-                using (ZipFile archive = new ZipFile(arguments.FilePath + arguments.FileName))
+                using (var archive = ArchiveFactory.Open(arguments.FilePath + arguments.FileName))
                 {
-                    if (arguments.Ignore != null)
-                        foreach (var i in arguments.Ignore)
-                            archive.RemoveSelectedEntries(i);
+                    UnPack(progress, archive.Entries.Where(entry => !entry.IsDirectory), arguments, child, main);
 
-                    if (arguments.FilePath == null) return false;
+                    double totalSize = archive.Entries.Where(e => !e.IsDirectory).Sum(e => e.Size);
+                    long completed = 0;
+                    child.MaxTicks = (int)completed;
+                    foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                    {
+                        if (arguments.Ignore == null || !arguments.Ignore.Contains(entry.Key))
+                        {
+                            child.Message = $"unzip '{entry.Key}' in '{arguments.FilePath}'";
+                            entry.WriteToDirectory(arguments.FilePath, new ExtractionOptions()
+                            {
+                                ExtractFullPath = true,
+                                Overwrite = true
+                            });
 
-                    archive.ExtractProgress += new EventHandler<ExtractProgressEventArgs>((sender, e) => ExtractProgress(sender, e, progress, child, arguments.FilePath));
-                    archive.ExtractAll(arguments.FilePath, ExtractExistingFileAction.OverwriteSilently);
+                            completed += entry.Size;
+                            var percentage = completed / totalSize;
+
+                            if (progress != null)
+                                progress.Report((int)percentage);
+                        }
+
+                    }
+                    child.Message = $"unzip successfully '{arguments.FileName}' in '{arguments.FilePath}'";
+                    child.Tick();
+                    main.Tick();
+                    return true;
                 }
-                child.Message = $"unzip successfully '{arguments.FileName}' in '{arguments.FilePath}'";
-                child.Tick();
-                main.Tick();
-                return true;
             }
-
-            return false;
 
         }
         catch (Exception e)
@@ -107,6 +122,39 @@ public static class Steps
         }
 
 
+    }
+
+    public static bool UnPack(IProgress<float>? progress, IEnumerable<IArchiveEntry> entries, Options arguments, ChildProgressBar child, ProgressBar main)
+    {
+        if (arguments.FilePath == null)
+            return false;
+
+        progress = child.AsProgress<float>();
+        double totalSize = entries.Where(e => !e.IsDirectory).Sum(e => e.Size);
+        long completed = 0;
+        child.MaxTicks = (int)completed;
+        foreach (var entry in entries)
+        {
+            if (arguments.Ignore == null || !arguments.Ignore.Contains(entry.Key))
+            {
+                child.Message = $"unpack '{entry.Key}' in '{arguments.FilePath}'";
+                entry.WriteToDirectory(arguments.FilePath, new ExtractionOptions()
+                {
+                    ExtractFullPath = true,
+                    Overwrite = true
+                });
+
+                completed += entry.Size;
+                var percentage = completed / totalSize;
+
+                if (progress != null)
+                    progress.Report((int)percentage);
+            }
+        }
+        child.Message = $"unpack successfully '{arguments.FileName}' in '{arguments.FilePath}'";
+        child.Tick();
+        main.Tick();
+        return true;
     }
 
     public static void RemoveFilesOrDirectory(Options arguments)
@@ -127,7 +175,6 @@ public static class Steps
         }
 
     }
-
 
     public static bool OpenExe(IProgress<float>? progress, ProgressBar main, ProgressBarOptions options, Options arguments)
     {
@@ -152,20 +199,6 @@ public static class Steps
             return false;
         }
 
-    }
-
-    public static void ExtractProgress(object? sender, ExtractProgressEventArgs e, IProgress<float>? progress, ChildProgressBar pbar, string filePath)
-    {
-        if (pbar.MaxTicks < (int)e.TotalBytesToTransfer)
-            pbar.MaxTicks = (int)e.TotalBytesToTransfer;
-
-        if (e.TotalBytesToTransfer > 0)
-        {
-            pbar.Message = $"unzip '{e.CurrentEntry.FileName}' in '{filePath}'";
-            var p = (float)e.BytesTransferred / (float)e.TotalBytesToTransfer;
-            if (progress != null)
-                progress.Report(p);
-        }
     }
 
     public static void Wait()
