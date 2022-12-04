@@ -1,9 +1,8 @@
-﻿using CommandLine;
-using CommandLine.Text;
-using Serilog;
+﻿using Serilog;
 using ShellProgressBar;
 using System.Reflection;
-using static UpdaterSteps;
+using static updater.core.UpdaterSteps;
+using static updater.utils.ProcessArguments;
 
 class Program
 {
@@ -17,32 +16,7 @@ class Program
                      .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + $@"\logs\updater_{version}_.txt", rollingInterval: RollingInterval.Day)
                      .CreateLogger();
 
-
-        var a = Parser.Default.ParseArguments<ArgOptions>(args);
-
-        a.WithParsed(o =>
-        {
-
-            if (o.FilePath == null)
-                o.FilePath = AppDomain.CurrentDomain.BaseDirectory;
-
-            if (o.FileName == null)
-                o.FileName = "update";
-
-            if (o.DownloadUrl == null)
-            {
-                var m = "the download url must be the first ardument and cannot be empty";
-                Console.WriteLine(m);
-                Log.Error(m);
-                Wait();
-            }
-
-        })
-        .WithNotParsed(e =>
-        {
-            var helpText = HelpText.AutoBuild(a, h => HelpText.DefaultParsingErrorsHandler(a, h), e => e);
-            Wait();
-        });
+        var a = Read(args);
 
         IProgress<float>? progress = null;
 
@@ -57,18 +31,18 @@ class Program
         };
 
         var nSteps = 2;
-        if (a.Value.OpenExe != null) nSteps++;
+        if (a.OpenExe != null) nSteps++;
 
         using (var main = new ProgressBar(nSteps, $"update process", options))
         {
             try
             {
-                if (a.Value.DownloadUrl == null || a.Value.FileName == null || a.Value.FilePath == null) return;
-                if (!await DownloadFile(progress, main, options, a.Value)) return;
-                if (!UnpackDownload(progress, main, options, a.Value)) return;
-                RemoveFilesOrDirectory(a.Value);
-                if (a.Value.OpenExe != null) OpenExe(progress, main, options, a.Value);
-                if (a.Value.WaitClose) EndWait(main);
+                if (a.DownloadUrl == null || a.FileName == null || a.FilePath == null) return;
+                if (!await DownloadFile(progress, main, options, a)) return;
+                if (!UnpackDownload(progress, main, options, a)) return;
+                RemoveFilesOrDirectory(a);
+                if (a.OpenExe != null) OpenExe(progress, main, options, a);
+                if (a.WaitClose) EndWait(main);
             }
             catch (Exception e)
             {
@@ -79,8 +53,6 @@ class Program
         }
 
     }
-
-
 
 }
 

@@ -2,6 +2,7 @@
 using SharpCompress.Common;
 using ShellProgressBar;
 using System.Diagnostics;
+using updater.models;
 
 namespace updater.utils
 {
