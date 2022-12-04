@@ -21,7 +21,7 @@ namespace updater.utils
             {
                 if (arguments.Ignore == null || !arguments.Ignore.Contains(entry.Key))
                 {
-                    child.Message = $"unpack '{entry.Key}' in '{arguments.FilePath}'";
+                    child.Message = $"decompress {entry.Archive.Type} '{entry.Key}' in '{arguments.FilePath}'";
                     entry.WriteToDirectory(arguments.FilePath, new ExtractionOptions()
                     {
                         ExtractFullPath = true,
@@ -35,12 +35,12 @@ namespace updater.utils
                         progress.Report((int)percentage);
                 }
             }
-            child.Message = $"unpack successfully '{arguments.FileName}' in '{arguments.FilePath}'";
+            child.Message = $"decompress successfully '{arguments.FileName}' in '{arguments.FilePath}'";
             child.Tick();
             main.Tick();
             return true;
         }
-    
+
         public static bool UnpackMsi(ArgOptions arguments, ChildProgressBar child, ProgressBar main)
         {
             Process process = new Process();

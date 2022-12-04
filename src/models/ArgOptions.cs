@@ -9,7 +9,7 @@ namespace updater.models
         [Option('f', "file", HelpText = "Name with which the downloaded file will be saved, default: update")]
         public string? FileName { get; set; }
 
-        [Option('e', "extension", HelpText = "Name with which the downloaded file will be saved, default: update")]
+        [Option('e', "extension", HelpText = "Only use in special cases like 'msi', by default it autodetects, supported Archive Formats: Zip, GZip, Tar, Rar, 7Zip")]
         public PackFormat? FileExtension { get; set; }
 
         [Option('p', "filepath", HelpText = "Path where to download and unpack, default is base directory")]
@@ -27,6 +27,8 @@ namespace updater.models
         [Option('i', "ignore", Separator = ',', HelpText = "Ignore files when unzipping")]
         public IEnumerable<string>? Ignore { get; set; }
 
+        [Option('d', "decopass", HelpText = "Password required to decompression the file")]
+        public string? Password { get; set; }
     }
 
     public enum PackFormat

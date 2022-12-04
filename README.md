@@ -4,16 +4,17 @@
 
 # 📚 Arg commands
 
-| short  | long | help  | remark  |
+| short  | long command | help  | remark  |
 |---|---|---|---|
 | 0 |   | Address where the compressed file (zip) to download is located. is required and must be  | `required`  |
 | -f  | --filename  | Name with which the downloaded file will be saved | `def`: update  |
-| -e  | --extension  | Extension with which the downloaded file will be saved | `def`: zip  |
+| -e  | --extension  | Only use in special cases like 'msi', by default it autodetects, supported Archive Formats: Zip, GZip, Tar, Rar, 7Zip |  |
 | -p  | --filepath  | Path where to download and unpack | `def`: base directory |
 | -w |  --wait | Prevent the app from auto closing  |   |
 | -o  | --open  | Executable to start when the process terminate  |   |
 |  -r | --remove  | Remove files or directories before opening  | `separator ','`  |
 | -i  | --ignore  | Ignore files when unzipping  |  `separator ','` |
+| -d  | --decopass  | Password required to unzip the file  |   |
 |   | --help  | Display this help screen  |   |
 |   | --version  | Display version information  |   |
 

@@ -66,7 +66,7 @@ namespace updater.core
                 else
                 {
                     progress = child.AsProgress<float>();
-                    using (var archive = ArchiveFactory.Open(arguments.FilePath + arguments.FileName))
+                    using (var archive = ArchiveFactory.Open(arguments.FilePath + arguments.FileName, new SharpCompress.Readers.ReaderOptions { Password = arguments.Password }))
                     {
                         return UnpackUtils.UnpackGeneric(progress, archive.Entries.Where(entry => !entry.IsDirectory), arguments, child, main);
                     }
