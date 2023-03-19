@@ -13,14 +13,13 @@ namespace updater.utils
             if (arguments.FilePath == null)
                 return false;
 
-            progress = child.AsProgress<float>();
-            double totalSize = entries.Where(e => !e.IsDirectory).Sum(e => e.Size);
-            long completed = 0;
-            child.MaxTicks = (int)completed;
+            child.MaxTicks = entries.Count();
+
             foreach (var entry in entries)
             {
                 if (arguments.Ignore == null || !arguments.Ignore.Contains(entry.Key))
                 {
+
                     child.Message = $"decompress {entry.Archive.Type} '{entry.Key}' in '{arguments.FilePath}'";
                     entry.WriteToDirectory(arguments.FilePath, new ExtractionOptions()
                     {
@@ -28,13 +27,12 @@ namespace updater.utils
                         Overwrite = true
                     });
 
-                    completed += entry.Size;
-                    var percentage = completed / totalSize;
 
-                    if (progress != null)
-                        progress.Report((int)percentage);
                 }
+
+                child.Tick();
             }
+
             child.Message = $"decompress successfully '{arguments.FileName}' in '{arguments.FilePath}'";
             child.Tick();
             main.Tick();
