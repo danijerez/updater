@@ -1,4 +1,4 @@
-# 📦 Updater ~ [![Release](https://img.shields.io/badge/releases-orange)](https://github.com/danijerez/updater/releases) [![Release](https://img.shields.io/badge/dotnet-7.0-purple)](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+# 📦 Updater ~ [![Release](https://img.shields.io/badge/releases-orange)](https://github.com/danijerez/updater/releases) [![Release](https://img.shields.io/badge/dotnet-8.0-purple)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ## Simple solution to update apps. Call `updater.exe` with commands arguments you need.
 
